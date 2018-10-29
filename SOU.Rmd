@@ -1,0 +1,34 @@
+---
+title: "trump"
+author: "John Ball"
+date: "October 29, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidytext)
+x <- read_csv("presidents.csv")
+y <- read_csv("sou.csv")
+```
+
+```{r}
+
+new <- x %>%
+  left_join(y, by = "president")
+
+xent <- new %>%
+  unnest_tokens(word, text) %>%
+  inner_join(get_sentiments("nrc"))
+
+xent %>%
+  group_by(party) %>%
+  count(sentiment)
+
+
+xent %>%
+  ggplot(aes(x = date, y = word, color = sentiment)) + geom_line()
+```
+
+
